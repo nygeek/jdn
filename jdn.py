@@ -2,7 +2,7 @@
 
 # Julian Day Number object
 
-# $Id$
+# $Id: jdn.py,v 1.5 2022/03/09 22:11:27 marc Exp marc $
 
 #
 # calcJDN( year, month, day ) computes the Julian Day Number (JDN).  This

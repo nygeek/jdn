@@ -1,0 +1,50 @@
+#!/usr/bin/python
+
+# $Id: testcalendar,v 1.1 2008/12/07 14:33:31 marc Exp marc $
+
+from sys           import argv
+from os.path       import basename
+from getopt        import getopt
+from datetime      import date
+from time          import time
+
+from jdn           import jdn
+from calendar      import calendar
+
+optlist = getopt( argv[1:], "hy:m:" )
+
+today = date.fromtimestamp( time() )
+year = today.year
+month = today.month
+day = today.day
+
+done = False
+for avp in optlist[ 0 ]:
+  option = avp[ 0 ]
+  value = avp[ 1 ]
+  if ( option == "-h" ):
+    cmdname = basename( argv[ 0 ] )
+    print
+    print "Syntax is: " + cmdname + " <options>"
+    print
+    print "  Options:"
+    print "  -h            display this documentation"
+    print "  -y <yyyy>     specify Gregorian date year"
+    print "  -m <dd>       specify Gregorian date month"
+    print
+    print "  If no date is specified, today's date ( "\
+          + str( z.getYear() ) + " " + z.getMonthName() + " " + str( z.getDay ) + " ) will be used."
+    print
+    done = True
+  elif ( option == "-y" ):
+    year = int( value )
+  elif ( option == "-m" ):
+    month = int( value )
+  elif ( option == "-d" ):
+    day = int( value )
+
+if not done:
+  c = calendar( year, month )
+  for w in c.render():
+    print w
+  
