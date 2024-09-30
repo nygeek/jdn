@@ -4,14 +4,14 @@ Julian Day Number calculations
 
 ## background
 
-'''calcJDN( year, month, day )''' computes the Julian Day Number (JDN).  This
+***calcJDN( year, month, day )*** computes the Julian Day Number (JDN).  This
 is a measure of time that starts on 1 January 4713 BCE and increments
 uniformly.  It is used extensively by astronomers because of its
 uniformity.  This system deviates from the classical JDN, which
 changes at noon rather than at midnight.  This begs the question
 of noon *where*, of course.
 
-calcYMD( jdn ) inverts the calculation in julian and returns the tuple
+***calcYMD( jdn )*** inverts the calculation in julian and returns the tuple
 ( year, month, day ) corresponding to the proffered jdn.  Note that this
 implementation of the calculator assumes that the switch from the old
 Julian calendar to the Gregorian calendar took place on 2 September 1752,
