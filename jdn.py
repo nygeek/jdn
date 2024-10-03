@@ -5,7 +5,7 @@
 
     Copyright (C) 2024 Marc Donner
 
-    To Do:
+    To Do: finish migrating to Python3
 
 """
 
