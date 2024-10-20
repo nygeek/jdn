@@ -33,7 +33,8 @@ HOME := "/Users/marc"
 DIRPATH := "${HOME}/projects/j/julian/"
 
 SOURCE = \
-		 jdn.py
+	jdn.py \
+	test3.py
 
 FILES = \
 	${SOURCE} \
@@ -41,7 +42,6 @@ FILES = \
 	Makefile \
 	README.md \
 	pylintrc \
-	test3.py \
 	test.reference
 
 TESTS = \
