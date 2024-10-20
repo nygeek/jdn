@@ -25,7 +25,6 @@ endif
 
 # Python version
 PYTHON := python3
-# PYTHON := python2
 PYLINT := ${PYTHON} -m pylint
 
 DIRS := "."

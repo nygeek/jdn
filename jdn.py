@@ -5,8 +5,6 @@
 
     Copyright (C) 2024 Marc Donner
 
-    To Do: finish migrating to Python3
-
 """
 
 # Regular year [0] Leap year [1]
@@ -248,9 +246,6 @@ class JulianDate:
                 y1 -= 1
             self.jdn -= ((y1 // 100) * 3) // 4
 
-        self.jdn_flag = True
-        return self.jdn
-
 
     def calc_leap(self, y):
         """ Is y a leap year? """
@@ -360,6 +355,7 @@ def main():
         jdn2 = engine.get_jdn()
         print(f"y: {y}, y: {m}, y: {d} => {jdn2}")
         print("=====\n") 
+
 
 if __name__ == '__main__':
     main()
