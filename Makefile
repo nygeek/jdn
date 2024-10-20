@@ -33,6 +33,8 @@ DIRPATH := "${HOME}/projects/j/julian/"
 
 SOURCE = \
 	jdn.py \
+	julian.py \
+	nailuj.py \
 	test3.py
 
 FILES = \
