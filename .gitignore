@@ -1,4 +1,4 @@
 RCS/
 .venv/
 zztest/
-testpython.out
+__pycache__/
