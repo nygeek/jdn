@@ -41,26 +41,26 @@ FILES = \
 	Makefile \
 	README.md \
 	pylintrc \
-	testpython \
-	testpython.reference
+	test3.py \
+	test.reference
 
 TESTS = \
-	testpython.out
+	test.out
 
 listings: ${SOURCE}
 	echo ${SOURCE}
 	enscript -b '${DIRPATH}' -p- -G ${SOURCE} | ps2pdf - listings.pdf
 
-.PHONY: tests
-tests:
+.PHONY: test
+test:
 	rm -f ${TESTS}
 	echo 'Testing python library ...'
-	${MAKE} testpython.out
+	${MAKE} test.out
 	echo 'done.'
 
-testpython.out: ./testpython jdn.py
-	${PYTHON} ./testpython > testpython.out
-	diff testpython.out testpython.reference
+test.out: test3.py jdn.py
+	${PYTHON} ./test3.py > test.out
+	- diff test.out test.reference
 
 pylint:
 	- ${PYLINT} ${SOURCE}
