@@ -387,14 +387,12 @@ class JulianDate:
                 # single exception
                 self.leap = True
 
-        # self.d right now is day-of-year ... we need to figure out
-        # the month so that we end up with self.d as day-of-month for
-        # the correct month.
+        # self.d right now is day-of-year (index origin 0) ...
+        # we need to figure out the month so that we end up
+        # with self.d as day-of-month for the correct month.
 
-        self.m = sum(d < self.d for d in TOT_LEN[self.leap])
+        self.m = sum(d <= self.d for d in TOT_LEN[self.leap])
         self.d = self.d - TOT_LEN[self.leap][self.m - 1] + 1
-        if self.d > 31:
-            print(f"self.d: {self.d} ==> self.m: {self.m}")
 
         self.ymd_flag = True
         return (self.y, self.m, self.d)
