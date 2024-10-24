@@ -24,7 +24,7 @@ for j in range(0, 9999647):
     engine.set_year(y)
     k = engine.get_jdn()
     month_histogram[m] += 1
-    # print(f"+++ d: {d}")
+    print(f"+++ d: {d}")
     day_histogram[d] += 1
     if j != k or d == 32:
         print(f"j: {j}")

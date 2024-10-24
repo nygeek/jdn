@@ -28,17 +28,55 @@ MONTH_NAME = [
     "December"
     ]
 
+DOW_NAME = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+    ]
+
 # Regular year [0] Leap year [1]
 MONTH_LENGTH = [
     [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
     [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     ]
 
+#
+# The Gregorian reform was adopted by Papal action in 1582,
+# with 4 October 1582 followed by 14 October 1582, omitting nine
+# days.
+#
+GREGORIAN_NEW_STYLE_JDN = 2299160
+GREGORIAN_NEW_STYLE_YEAR = 1582
+GREGORIAN_NEW_STYLE_MONTH = 10
+GREGORIAN_NEW_STYLE_DAY = 4
+
+#
+# The British Empire adopted the new style calendar in 1752,
+# with 2 September 1752 followed by 14 September 1752, omitting eleven
+# days.
+#
+BRITISH_NEW_STYLE_JDN = 2361221
+BRITISH_NEW_STYLE_YEAR = 1752
+BRITISH_NEW_STYLE_MONTH = 9
+BRITISH_NEW_STYLE_DAY = 2
+
+# We will use two different two-letter ISO 3166 country codes
+# to differentiate between the two calendars.  'gb' for the British
+# Empire calendar and 'it' for the original Gregorian calendar.
+
 class JulianDate:
     """Julian Date class."""
 
-    def __init__(self, y_or_jdn, m=None, d=None):
+    # pylint: disable=too-many-instance-attributes
+    # Eight is reasonable in this case.
+
+    def __init__(self, y_or_jdn, m=None, d=None, region='gb'):
         """ initialize """
+        self.region = region
         self.y = 0
         self.m = 0
         self.d = 0
@@ -171,6 +209,15 @@ class JulianDate:
         # ..., 6 -> Sunday
 
 
+    def get_dow_name(self):
+        """ get day of week (dow) """
+        if not self.jdn_flag:
+            self.calc_jdn()
+        return DOW_NAME[(self.jdn + 1) % 7]
+        # this way 0 -> Sunday, 1 -> Monday, 2 > Tuesday,
+        # ..., 6 -> Sunday
+
+
     def get_ymd(self):
         """ get ymd """
         if not self.ymd_flag:
@@ -209,7 +256,7 @@ class JulianDate:
             yd -= 1
         # Now look up days from completed months before this one
         md = TOT_LEN[self.leap][self.m - 1]
-        # jdn = days from years (yd) plus days from months (md) 
+        # jdn = days from years (yd) plus days from months (md)
         #       plus days from the current month
         self.jdn = yd + md + self.d
         #
@@ -277,17 +324,23 @@ class JulianDate:
 
     def calc_ymd(self):
         """ calculate ymd from jdn """
+
         # 1684595 is the JDN for 3 March -100.
         # 146097 is the number of days in 400
+        # 1461 is the number of days in a four-year leap cycle
         # years in the new style calendar
-        # 2361221 is the JDN for 2 September 1752,
-        # the last day of the Julian (old style)
-        # calendar in Britain and its colonies
 
-        # this undoes the Gregorian correction, so workjdn
-        # would be the date if we still had the Julian calendar
+        # First step, undo the Gregorian leap adjustment so that
+        # we can calculate y,m,d more simply.
+        #
+        # The Julian reform, adopted in 43 BCE, got the calendar
+        # and the seasons back into alignment, so the Gregorian
+        # adjustment only needs to estimate the corrections back to
+        # 100 BCE.
+        #
         workjdn = self.jdn
-        if self.jdn > 2361221:
+        if self.jdn > BRITISH_NEW_STYLE_JDN:
+        # if self.jdn > 2361221:
             century = ((self.jdn - 1684595) * 4) // 146097
             workjdn += ((century * 3) // 4) - 2
 
@@ -334,10 +387,14 @@ class JulianDate:
                 # single exception
                 self.leap = True
 
-        for self.m in range(0, 13):
-            if self.d < TOT_LEN[self.leap][self.m]:
-                break
+        # self.d right now is day-of-year ... we need to figure out
+        # the month so that we end up with self.d as day-of-month for
+        # the correct month.
+
+        self.m = sum(d < self.d for d in TOT_LEN[self.leap])
         self.d = self.d - TOT_LEN[self.leap][self.m - 1] + 1
+        if self.d > 31:
+            print(f"self.d: {self.d} ==> self.m: {self.m}")
 
         self.ymd_flag = True
         return (self.y, self.m, self.d)
@@ -354,7 +411,7 @@ def main():
         engine.set_ymd(y, m, d)
         jdn2 = engine.get_jdn()
         print(f"y: {y}, y: {m}, y: {d} => {jdn2}")
-        print("=====\n") 
+        print("=====\n")
 
 
 if __name__ == '__main__':

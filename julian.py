@@ -47,35 +47,11 @@ def main():
 
     engine = JulianDate(0)
     engine.set_ymd(args.year, args.month, args.day)
-    dow = engine.get_dow()
-    daynames = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-    ]
-    dayname = daynames[dow]
+    dow_name = engine.get_dow_name()
 
     (y, m, d) = engine.get_ymd()
-    monthnames = [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
-            ]
-    monthname = monthnames[m]
-    print(f"Date is: {dayname}, {str(d)} {monthname} {y}")
+    month_name = engine.get_month_name()
+    print(f"Date is: {dow_name}, {str(d)} {month_name} {y}")
     print(f"JDN is: {engine.get_jdn()}")
 
 if __name__ == '__main__':

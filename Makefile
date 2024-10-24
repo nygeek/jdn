@@ -41,9 +41,18 @@ FILES = \
 	${SOURCE} \
 	.gitignore \
 	Makefile \
+	julian.sh \
+	nailuj.sh \
 	README.md \
 	pylintrc \
 	test.reference
+
+.PHONY: install
+install: julian.sh nailuj.sh
+	cp julian.sh ~/bin/julian
+	chmod +x ~/bin/julian
+	cp nailuj.sh ~/bin/nailuj
+	chmod +x ~/bin/nailuj
 
 TESTS = \
 	test.out

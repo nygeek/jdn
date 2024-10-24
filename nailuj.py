@@ -37,34 +37,11 @@ def main():
     engine.set_jdn(args.jdn)
 
     (y, m, d) = engine.get_ymd()
-    daynames = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-    ]
-    dayname = daynames[engine.get_dow()]
-    monthnames = [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
-            ]
-    monthname = monthnames[m]
+    dow_name = engine.get_dow_name()
+    month_name = engine.get_month_name()
 
     print(f"JDN is: {engine.get_jdn()}")
-    print(f"Date is: {dayname}, {str(d)} {monthname} {y}")
+    print(f"Date is: {dow_name}, {str(d)} {month_name} {y}")
 
 if __name__ == '__main__':
     main()
