@@ -297,7 +297,7 @@ class JulianDate:
     def calc_leap(self, y):
         """ Is y a leap year? """
         leap = (y % 4) == 0
-        if y > 1752:
+        if y > BRITISH_NEW_STYLE_YEAR:
             if (y % 100) == 0 and (y % 400) != 0:
                 # Not four century, but century
                 leap = False
@@ -373,7 +373,7 @@ class JulianDate:
         # print(f"DEBUG: year_in_cycle: {year_in_cycle}")
         self.leap = False
         if year_in_cycle == 0:
-            if self.y < 1752:
+            if self.y < BRITISH_NEW_STYLE_YEAR:
                 self.leap = True
             elif self.y % 100 == 0:
                 if self.y % 400 != 0:

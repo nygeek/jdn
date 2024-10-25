@@ -49,10 +49,10 @@ FILES = \
 
 .PHONY: install
 install: julian.sh nailuj.sh
-	cp julian.sh ~/bin/julian
-	chmod +x ~/bin/julian
-	cp nailuj.sh ~/bin/nailuj
-	chmod +x ~/bin/nailuj
+	cp julian.sh ${HOME}/bin/julian
+	chmod +x ${HOME}/bin/julian
+	cp nailuj.sh ${HOME}/bin/nailuj
+	chmod +x ${HOME}/bin/nailuj
 
 TESTS = \
 	test.out
