@@ -40,7 +40,8 @@ SOURCE = \
 	jdn.py \
 	julian.py \
 	nailuj.py \
-	test3.py
+	test3.py \
+	ymd-range.py
 
 FILES = \
 	${SOURCE} \
