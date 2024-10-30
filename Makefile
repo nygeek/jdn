@@ -37,6 +37,7 @@ HOME := $(shell echo ${HOME})
 PWD := $(shell pwd)
 
 SOURCE = \
+	hist-range.py \
 	jdn.py \
 	julian.py \
 	nailuj.py \
