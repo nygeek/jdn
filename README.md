@@ -88,3 +88,14 @@ the results of the test3.py test:
 > python3 hist-range bigrange.json > bigtest.out
 
 When done, bigtest.out and test.reference should be identical.
+
+## To Do
+
+When I wrote the original code I blithely designed it around the
+assumption that the work was only of interest in the British Empire
+and its successors in the English-speaking world.  This is not the
+case, so the calc_jdn() and calc_ymd() functions should be parameterized
+by region.  At the very least, we should correctly handle the 1582
+October 4 cutover to the new style calendar for the main Gregorian
+reform as well as the 1752 September 2 cutover for the English-speaking
+world.
