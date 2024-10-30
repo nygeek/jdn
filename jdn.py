@@ -77,76 +77,87 @@ class JulianDate:
     def __init__(self, y_or_jdn, m=None, d=None, region='gb'):
         """ initialize """
         self.region = region
-        self.y = 0
-        self.m = 0
-        self.d = 0
-        self.jdn = 0
+        self._y = 0
+        self._m = 0
+        self._d = 0
+        self._jdn = 0
         self.leap = 0
+        self.jdn_flag = True
+        self.ymd_flag = True
         if m is None and d is None:
-            self.jdn = y_or_jdn
-            self.jdn_flag = True
-            self.ymd_flag = False
+            self._jdn = y_or_jdn
             self.calc_ymd()
         elif d is None:
             raise TypeError("Call with one or three arguments.")
         else:
-            self.y = y_or_jdn
-            self.m = m
-            self.d = d
+            self._y = y_or_jdn
+            self._m = m
+            self._d = d
             self.calc_jdn()
-            self.leap = self.calc_leap(self.y)
-            self.jdn_flag = False
-            self.ymd_flag = True
+            self.leap = self.calc_leap(self._y)
 
 
-    def set_year(self, y):
-        """ set year """
+    def get_jdn(self):
+        """ get jdn """
+        if not self.jdn_flag:
+            self.calc_jdn()
+        return self._jdn
+
+
+    def set_jdn(self, value):
+        """ set jdn """
+        self._jdn = value
+        self.jdn_flag = True
+        self.ymd_flag = False
+
+
+    def get_y(self):
+        """The year property."""
         if not self.ymd_flag:
             self.calc_ymd()
-        self.y = y
+        return self._y
+
+
+    def set_y(self, value):
+        """The year property."""
+        self._y = value
         self.jdn_flag = False
         self.ymd_flag = True
 
 
-    def set_month(self, m):
-        """ set month """
+    def get_m(self):
+        """The month property."""
         if not self.ymd_flag:
             self.calc_ymd()
-        self.m = m
+        return self._m
+
+
+    def set_m(self, value):
+        """ Set month. """
+        self._m = value
         self.jdn_flag = False
         self.ymd_flag = True
 
 
-    def set_day(self, d):
-        """ set day """
+    def get_d(self):
+        """The day property."""
         if not self.ymd_flag:
             self.calc_ymd()
-        self.d = d
+        return self._d
+
+
+    def set_d(self, value):
+        """ Set day. """
+        self._d = value
         self.jdn_flag = False
         self.ymd_flag = True
-
-
-    def get_year(self):
-        """ get year """
-        if not self.ymd_flag:
-            self.calc_ymd()
-        return self.y
-        # Note that we can never have an instantiated JDN
-        # without at least one of jdn_flag or ymd_flag set.
-
-
-    def get_month(self):
-        """ get month """
-        if not self.ymd_flag:
-            self.calc_ymd()
-        return self.m
 
 
     def get_month_name(self):
         """ get month name """
         if not self.ymd_flag:
             self.calc_ymd()
-        return MONTH_NAME[self.m - 1]
+        return MONTH_NAME[self._m - 1]
 
 
     def get_month_length(self):
@@ -155,14 +166,7 @@ class JulianDate:
             self.calc_jdn()
         if not self.ymd_flag:
             self.calc_ymd()
-        return MONTH_LENGTH[self.leap][self.m - 1]
-
-
-    def get_day(self):
-        """ get day """
-        if not self.ymd_flag:
-            self.calc_ymd()
-        return self.d
+        return MONTH_LENGTH[self.leap][self._m - 1]
 
 
     def get_leap(self):
@@ -173,92 +177,55 @@ class JulianDate:
 
 
     def set_ymd(self, y, m, d):
-        """ set jdn """
-        self.y = y
-        self.m = m
-        self.d = d
-        self.calc_jdn()
-        self.leap = self.calc_leap(self.y)
+        """ set ymd """
+        self._y = y
+        self._m = m
+        self._d = d
+        self.leap = self.calc_leap(self._y)
         self.jdn_flag = False
-        self.ymd_flag = True
-        return self.jdn
-
-
-    def set_jdn(self, jdn):
-        """ set jdn """
-        self.jdn = jdn
-        self.jdn_flag = True
-        self.ymd_flag = False
-        self.calc_ymd()
-        return self.jdn
-
-
-    def get_jdn(self):
-        """ get jdn """
-        if not self.jdn_flag:
-            self.calc_jdn()
-        return self.jdn
 
 
     def get_dow(self):
         """ get day of week (dow) """
         if not self.jdn_flag:
             self.calc_jdn()
-        return (self.jdn + 1) % 7
-        # this way 0 -> Sunday, 1 -> Monday, 2 > Tuesday,
-        # ..., 6 -> Sunday
+        return (self._jdn + 1) % 7
+        # 0 -> Sunday, 1 -> Monday, ..., 6 -> Sunday
 
 
     def get_dow_name(self):
         """ get day of week (dow) """
         if not self.jdn_flag:
             self.calc_jdn()
-        return DOW_NAME[(self.jdn + 1) % 7]
-        # this way 0 -> Sunday, 1 -> Monday, 2 > Tuesday,
-        # ..., 6 -> Sunday
+        return DOW_NAME[(self._jdn + 1) % 7]
+        # 0 -> Sunday, 1 -> Monday, ..., 6 -> Sunday
 
 
     def get_ymd(self):
         """ get ymd """
         if not self.ymd_flag:
             self.calc_ymd()
-        return (self.y, self.m, self.d)
-
-
-    def calc_jdn_new(self):
-        """ calculate jdn from ymd"""
-        # Cribbed from https://www.hermetic.ch/cal_stud/jdn.htm
-        # Attributed to Henry F. Fliegel and Thomas C. Van Flandern.
-        y = self.y
-        m = self.m
-        d = self.d
-        self.jdn = \
-          (1461 * (y + 4800 + int((m - 14) // 12))) // 4 + \
-          (367 * (m - 2 - 12 * int((m - 14) // 12))) // 12 - \
-          (3 * ((y + 4900 + (m - 14) // 12) // 100)) // 4 + \
-          d - 32075
-        return self.jdn
+        return (self._y, self._m, self._d)
 
 
     def calc_jdn(self):
         """ calculate jdn from ymd"""
         #
         # Phase 1 - basic Julian Calendar calculation
+        # Day 0 of JDN numbering is 1 January 4713 BCE (-4712)
         #
-        # Day 0 of JDN numbering is 1 January 4713 BCE
-        y0 = self.y + 4712
-        # JDN contribution just from years: 365.25 * y0
+        y0 = self._y + 4712
+        # JDN contribution from completed years: 365.25 * y0
         # y0 must be an integer
         yd = 365 * y0 + y0 // 4
-        # Is this leap calculation needed?
-        self.leap = self.calc_leap(self.y)
+        self.leap = self.calc_leap(self._y)
         if self.leap:
             yd -= 1
         # Now look up days from completed months before this one
-        md = TOT_LEN[self.leap][self.m - 1]
+        md = TOT_LEN[self.leap][self._m - 1]
         # jdn = days from years (yd) plus days from months (md)
         #       plus days from the current month
-        self.jdn = yd + md + self.d
+        self._jdn = yd + md + self._d
         #
         # Phase 2 - Gregorian Calendar corrections
         #
@@ -268,30 +235,35 @@ class JulianDate:
         #     calendar in the British Empire
         #
         # Julian calendar assumes year is 365.25 days long.
-        # Year is actually 365.2422 days long, so after the Gregorian
-        # reform (1582-10-05, or 1752-09-02) we will need to subtract
+        # Year is closer to 365.2422 days long, so after the Gregorian
+        # reform (1582-10-05, or 1752-09-02) we need to subtract
         # the accumulated error to correct.  The Gregorian correction
         # eliminates three leap days in every 400 years.
+        #
         # Note that the Julian reform in 46 BCE corrected the accumulated
-        # error to then.
-        # Sadly, the pontifexes misunderstood the leap year rules and
-        # inserted leap years every three years for twelve cycles.
-        # These were corrected by eliminating leap years for twelve
-        # years ending in 4 CE, so we can treat the calendar as being
-        # aligned from then onward.  It still added 0.0078 days per year
-        # too many, which were corrected by the Gregorian reform in 1582.
+        # error to that point, about 90 days.
+        #
+	    # Sadly, the Pontifexes, who interpreted the calendar,
+	    # misunderstood the leap year rules and inserted leap years
+	    # every three years for twelve cycles.  These were corrected
+	    # by eliminating leap years for twelve cycles ending in 4 CE,
+	    # so we can treat the calendar as being aligned from then
+	    # onward.  It still added 0.0078 days per year too many, which
+	    # were (mostly) corrected by the Gregorian reform in 1582.  That
+        # reform took out 0.0075 days per year, across a 400 year cycle.
+        # Of course, that left an error of about 0.0003 day per year.
         #
 
-        if self.jdn > 2361221:
-            if self.y % 100 == 0 and self.y % 400 != 0:
+        if self._jdn > BRITISH_NEW_STYLE_JDN:
+            if self._y % 100 == 0 and self._y % 400 != 0:
                 self.leap = False
-                if self.m <= 2:
-                    self.jdn -= 1
-            self.jdn -= 1
-            y1 = self.y - 300
-            if self.m <= 2:
+                if self._m <= 2:
+                    self._jdn -= 1
+            self._jdn -= 1
+            y1 = self._y - 300
+            if self._m <= 2:
                 y1 -= 1
-            self.jdn -= ((y1 // 100) * 3) // 4
+            self._jdn -= ((y1 // 100) * 3) // 4
 
 
     def calc_leap(self, y):
@@ -304,31 +276,13 @@ class JulianDate:
         return leap
 
 
-    def calc_ymd_new(self):
-        """ calculate ymd from jdn """
-        # Cribbed from https://www.hermetic.ch/cal_stud/jdn.htm
-        # Attributed to Henry F. Fliegel and Thomas C. Van Flandern.
-        l = self.jdn + 68569
-        n = (4 * l) // 146097
-        l = l - (146097 * n + 3) // 4
-        i = (4000 * (l + 1)) // 1461001
-        l = l - (1461 * i) // 4 + 31
-        j = (80 * l) // 2447
-        self.d = l - (2447 * j) // 80
-        l = j // 11
-        self.m = j + 2 - (12 * l)
-        self.y = 100 * (n - 49) + i + l
-        self.leap = self.calc_leap(self.y)
-        return (self.y, self.m, self.d)
-
-
     def calc_ymd(self):
         """ calculate ymd from jdn """
 
         # 1684595 is the JDN for 3 March -100.
-        # 146097 is the number of days in 400
+        # 146097 is the number of days in 400 years, new style.
         # 1461 is the number of days in a four-year leap cycle
-        # years in the new style calendar
+        # years in the new style calendar.
 
         # First step, undo the Gregorian leap adjustment so that
         # we can calculate y,m,d more simply.
@@ -338,64 +292,81 @@ class JulianDate:
         # adjustment only needs to estimate the corrections back to
         # 100 BCE.
         #
-        workjdn = self.jdn
-        if self.jdn > BRITISH_NEW_STYLE_JDN:
-        # if self.jdn > 2361221:
-            century = ((self.jdn - 1684595) * 4) // 146097
-            workjdn += ((century * 3) // 4) - 2
 
+        workjdn = self._jdn
+        # print(f"self._jdn: {self._jdn} => workjdn: {workjdn}")
+
+        if self._jdn > BRITISH_NEW_STYLE_JDN:
+        # if self._jdn > 2361221:
+            century = ((self._jdn - 1684595) * 4) // 146097
+            workjdn += ((century * 3) // 4) - 2
+            # print(f"century: {century}, workjdn: {workjdn}")
+
+        # How many complete leap cycles have we completed?
         yearz = workjdn // 1461 * 4
-        self.d = workjdn % 1461
+        self._d = workjdn % 1461
+        # self._d now has the days in the current four-year
+        # leap cycle.
+        # print(f"after workjdn % 1461: self._d: {self._d}")
 
         #    0 -  365 is year 0, a leap year,   366 days long
         #  366 -  730 is year 1, a normal year, 365 days long
         #  732 - 1096 is year 2, a normal year, 365 days long
         # 1097 - 1461 is year 3, a normal year, 365 days long
 
-        if self.d <= 365:
+        if self._d <= 365:
             year_in_cycle = 0
-        elif 366 <= self.d and self.d <= 730:
-            self.d -= 366
+        elif 366 <= self._d and self._d <= 730:
+            self._d -= 366
             year_in_cycle = 1
-        elif 731 <= self.d and self.d <= 1095:
-            self.d -= 731
+        elif 731 <= self._d and self._d <= 1095:
+            self._d -= 731
             year_in_cycle = 2
         else:
-            self.d -= 1096
+            self._d -= 1096
             year_in_cycle = 3
 
+        # Now self._d has the day-of-year for *this* year
+
         yearz += year_in_cycle
-        self.y = yearz - 4712
+        self._y = yearz - 4712
+
+        # print(f"DEBUG: self._y: {self._y}, self._d: {self._d}")
+        # print(f"DEBUG: year_in_cycle: {year_in_cycle}")
 
         # this sets the self.leap value
-
-        # print(f"DEBUG: self.y: {self.y}, self.d: {self.d}")
-        # print(f"DEBUG: year_in_cycle: {year_in_cycle}")
         self.leap = False
         if year_in_cycle == 0:
-            if self.y < BRITISH_NEW_STYLE_YEAR:
+            if self._y < BRITISH_NEW_STYLE_YEAR:
+                # Old Style = always a leap year
                 self.leap = True
-            elif self.y % 100 == 0:
-                if self.y % 400 != 0:
-                    # double exception
-                    if self.d > TOT_LEN[self.leap][2]:
-                        self.d -= 1
+            elif self._y % 100 == 0:
+                if self._y % 400 != 0:
+                    # double exception - NOT a leap year
+                    # tweak it AS IF it were a leap year
+                    if self._d > TOT_LEN[self.leap][2]:
+                        self._d -= 1
                 else:
-                    # triple exception
+                    # triple exception - a leap year
                     self.leap = True
             else:
-                # single exception
+                # single exception - regular leap year
                 self.leap = True
 
         # self.d right now is day-of-year (index origin 0) ...
         # we need to figure out the month so that we end up
         # with self.d as day-of-month for the correct month.
 
-        self.m = sum(d <= self.d for d in TOT_LEN[self.leap])
-        self.d = self.d - TOT_LEN[self.leap][self.m - 1] + 1
+        self._m = sum(d <= self._d for d in TOT_LEN[self.leap])
+        # print(f"before: self._d: {self._d}")
+        self._d -= TOT_LEN[self.leap][self._m - 1]
+        self._d += 1
+        # print(f"self.leap {self.leap}, self._m: {self._m}")
+        # print(f"TOT_LEN[...]: {TOT_LEN[self.leap][self._m - 1]}")
+        # print(f"after: self._d: {self._d}")
 
         self.ymd_flag = True
-        return (self.y, self.m, self.d)
+        return (self._y, self._m, self._d)
 
 
 def main():
@@ -405,7 +376,7 @@ def main():
     for jdn in testjdns:
         engine.set_jdn(jdn)
         (y, m, d) = engine.get_ymd()
-        print(f"{jdn} => y: {y}, y: {m}, y: {d}")
+        print(f"{jdn} => y: {y}, y: {m}, d: {d}")
         engine.set_ymd(y, m, d)
         jdn2 = engine.get_jdn()
         print(f"y: {y}, y: {m}, y: {d} => {jdn2}")

@@ -1,4 +1,2 @@
-#!/bin/bash
-
-JULIANDIR="${HOME}/projects/j/julian"
-/usr/local/bin/python3 ${JULIANDIR}/nailuj.py $*
+#!/opt/local/bin/bash
+/opt/local/bin/python3 /Users/marc/projects/j/julian/nailuj.py $*

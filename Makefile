@@ -10,6 +10,9 @@
 help:
 	echo "OS: " ${OS}
 	echo "DATE: " ${DATE}
+	echo "PYTHON:" ${PYTHON}
+	echo "BASH:" ${BASH}
+	echo "HOME:" ${HOME}
 	cat Makefile
 
 clean: *.pyc *.out *.ps *.pdf
@@ -24,12 +27,14 @@ else
 endif
 
 # Python version
-PYTHON := python3
+# PYTHON := python3
+PYTHON := $(shell which python3)
 PYLINT := ${PYTHON} -m pylint
+BASH := $(shell which bash)
 
 DIRS := "."
-HOME := "/Users/marc"
-DIRPATH := "${HOME}/projects/j/julian/"
+HOME := $(shell echo ${HOME})
+PWD := $(shell pwd)
 
 SOURCE = \
 	jdn.py \
@@ -47,19 +52,28 @@ FILES = \
 	pylintrc \
 	test.reference
 
+.PHONY: julian.sh
+julian.sh:
+	echo '#!'${BASH} > julian.sh
+	echo ${PYTHON} ${PWD}/julian.py '$$*' >> julian.sh
+
+.PHONY: nailuj.sh
+nailuj.sh:
+	echo '#!'${BASH} > nailuj.sh
+	echo ${PYTHON} ${PWD}/nailuj.py '$$*' >> nailuj.sh
+
 .PHONY: install
 install: julian.sh nailuj.sh
-	cp julian.sh ${HOME}/bin/julian
-	chmod +x ${HOME}/bin/julian
-	cp nailuj.sh ${HOME}/bin/nailuj
-	chmod +x ${HOME}/bin/nailuj
+	- rm -f ${HOME}/bin/j3 ${HOME}/bin/n3
+	(cd ${HOME}/bin; ln -s ${PWD}/julian.sh j3)
+	(cd ${HOME}/bin; ln -s ${PWD}/nailuj.sh n3)
 
 TESTS = \
 	test.out
 
 listings: ${SOURCE}
 	echo ${SOURCE}
-	enscript -b '${DIRPATH}' -p- -G ${SOURCE} | ps2pdf - listings.pdf
+	enscript -b ${PWD} -p- -G ${SOURCE} | ps2pdf - listings.pdf
 
 .PHONY: test
 test:

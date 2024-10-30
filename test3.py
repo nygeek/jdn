@@ -21,7 +21,7 @@ for j in range(0, 9999647):
     (y, m, d) = engine.get_ymd()
     # This does nothing other than force recalculation of
     # JDN when next get_jdn() is called
-    engine.set_year(y)
+    engine.set_ymd(y, m, d)
     k = engine.get_jdn()
     month_histogram[m] += 1
     # print(f"+++ d: {d}")

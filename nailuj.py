@@ -21,19 +21,18 @@ def main():
     today_month = today.month
     today_day = today.day
 
-    engine = JulianDate(0)
-    engine.set_ymd(today_year, today_month, today_day)
+    engine = JulianDate(today_year, today_month, today_day)
     today_jdn = engine.get_jdn()
 
-    program_name = sys.argv[0]
+    # program_name = sys.argv[0]
     # print "program_name: " + program_name
 
     parser = argparse.ArgumentParser(description='Accept a JDN.')
-
     parser.add_argument('jdn', type=int, nargs='?',\
             default=today_jdn, help='Julian Day Number')
 
     args = parser.parse_args()
+    # print(f"args.jdn: {args.jdn}")
     engine.set_jdn(args.jdn)
 
     (y, m, d) = engine.get_ymd()
